@@ -32,6 +32,10 @@ module.exports = [
         },
     },
     {
-        ignores: ['dist/'], // Add this line to ignore the dist directory because dist folder mein hum n sirf JS kaa code dekhnye k liye create kra tha
+        ignores: [ // so I am ignoring these all files 
+            'dist/**', // Add this line to ignore the dist directory because dist folder mein hum n sirf JS kaa code dekhnye k liye create kra tha
+            'node_modules/**',
+            '*.spec.ts',
+            'tests/**'], 
     },
 ];
