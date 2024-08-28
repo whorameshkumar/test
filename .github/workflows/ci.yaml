@@ -1,0 +1,70 @@
+ name: CI
+ 
+# Kya honye k baad humara action trigger hona chaiye
+# so, push and pull mein set kra for main branch of GitHub, change bhi krsaktye ho to any other branch. Lazmi nhi hai k main branch hi ho.
+on:
+    pull_request:
+        branches:
+            - main # Github main branch for pull
+
+    push:
+        branches:
+            - main # Github main branch for push
+
+# multiple jobs ko group krtye hain in jobs 
+jobs:
+    # Job 1 
+    build-and-test:
+        name: Build the project # Job name, koi bhi naam du 
+        runs-on: ubuntu-latest # so mene machine ubuntu select ki, refer github actions documentation if u want anyother machine
+        # if: github.event_name == 'pull_request' # agar koi conditions deni hai tu wo bhi daal saktye ho k job kb chalye 
+        steps: # sb jobs mein steps hotye hain, basically commands which will be executed 
+            - uses: actions/checkout@v3 # will checkout or download ur code 
+            - name: Install dependencies  # naam edit krsaktye ho apni hisaab sye 
+              run: npm ci # yhe hai command jo ubuntu machine mein mein execute krwana chata hn, hum aur bhi commands execute krsaktye hain jesye prettier, everything we can execute npm kr k but unn ki need nhi abhi 
+            - name: Run eslint
+              run: npm run lint
+            - name: Test and coverage
+              run: npm run test
+              # yhe sarye secrets hum abhi add krein gye in our GitHub repo 
+              env: # so upar commands like npm ci, npm run lint, npm run test k liye mujhe env variables bhi chaiye hongye so aesye pass krdiye secrets 
+                DB_HOST: ${{ secrets.TEST_DB_HOST }} 
+                DB_PORT: ${{ secrets.TEST_DB_PORT }}
+                DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+                DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+                DB_NAME: ${{ secrets.TEST_DB_NAME }}
+                REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+                JWKS_URI: ${{ secrets.JWKS_URI }}
+                PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+            - name: Build-ts 
+              run: npm run build # agar test pass hogaya tu now we will build typeScript project
+            - name: SonarCloud
+              uses: SonarSource/sonarcloud-github-action@master
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # iss ko inject krnye k need nhi GitHub by default khud hi kredye gaa
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # but iss ko inject krna hoga hum ko khud sye 
+    
+    # Job 2 
+    build-and-push-docker:
+          name: Build and Push Docker Image
+          needs: build-and-test # upar kaa Job 1 kaa naam hum n yhe dia tha, tu iss Job 2 ko Job 1 ki need hai. Means Job2 will not start until Job1 execution is not finish.  
+          runs-on: ubuntu-latest # so mene machine ubuntu select ki
+          env: # again environment variables pass krye 
+            IMAGE_NAME: whorameshkumar/backend # ab docker hub mein ko image banye gii uss kaa naam kya rakhna hai wo mene yhe naam dia hai aap kuch bhi dye du, aur whorameshkumar is namespace in my dockerHub
+            IMAGE_TAG: build-${{github.run_number }} # whorameshkumar/backend:build-1, 2,3,4,5 so on. 
+          if: github.ref == 'refs/heads/main' && github.event_name == 'push' # ab upar wala Job1 + yhe Job2 dono execute hongye. Aur refs/heads/main means GitHub ki main branch and event will be push 
+          steps:
+            - name: Checkout repository # just checking out repository 
+              uses: actions/checkout@v3
+            - name: Log in to Docker Hub # now login kr rehye hain in Docker Hub 
+              uses: docker/login-action@v1  # yhe default command hai to login to Docker Hub 
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }} # jo humara login username hai docker hub mein wo 
+                password: ${{ secrets.DOCKERHUB_PASSWORD }} # aur docker hub sye jo token generate kra tha wo 
+            - name: Build Docker image # ab production ki docker image bana rehye hain wo command dali hai
+              run: docker build -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f docker/prod/Dockerfile . # dekho in docker then prod folder has Dockerfile to build prod image, so we are building prod image here 
+            - name: Push Docker image to Docker Hub
+              run: docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} # now image will be pushed to docker hub
+
+# so, job 1 will run 2 times i.e. push k baad bhi and pull k baad bhi matlab merge krnye k baad bhi 
+# so, job 2 will run only jb hum merge krlein so yahan sirf push k waqt yhe job chalye gaa
