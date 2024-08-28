@@ -3,6 +3,7 @@ const js = require('@eslint/js');
 const tsPlugin = require('@typescript-eslint/eslint-plugin');
 const tsParser = require('@typescript-eslint/parser');
 const globals = require('globals');
+
 module.exports = [
     js.configs.recommended,
     {
@@ -14,7 +15,6 @@ module.exports = [
             parser: tsParser,
             parserOptions: {
                 project: true,
-
                 //tsconfigRootDir: __dirname,
             },
             globals: {
@@ -22,20 +22,36 @@ module.exports = [
             },
         },
         rules: {
-            // if u need rules refer - eslint.org/docs/latest/rules -> Jis mein settings icon enable hai wo cheezain code mein eslint khud fix krdye gaa
             ...tsPlugin.configs['recommended'].rules,
             ...tsPlugin.configs['recommended-requiring-type-checking'].rules,
-            'no-console': 'error',
+            'no-console': 'warn', // Changed from 'error' to 'warn'
             'dot-notation': 'error',
             '@typescript-eslint/no-misused-promises': 'off',
             '@typescript-eslint/require-await': 'off',
+            '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
+            '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
         },
     },
     {
-        ignores: [ // so I am ignoring these all files 
-            'dist/**', // Add this line to ignore the dist directory because dist folder mein hum n sirf JS kaa code dekhnye k liye create kra tha
+        files: ['**/*.js', '**/*.mjs'],
+        languageOptions: {
+            globals: {
+                ...globals.node,
+                ...globals.jest, // Add Jest globals
+            },
+        },
+        rules: {
+            'no-undef': 'error',
+            'no-console': 'warn',
+        },
+    },
+    {
+        ignores: [
+            'dist/**',
             'node_modules/**',
             '*.spec.ts',
-            'tests/**'], 
+            'tests/**',
+            '*.spec.js', // Add this to ignore Jest test files
+        ],
     },
 ];
