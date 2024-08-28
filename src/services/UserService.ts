@@ -35,7 +35,8 @@ export class UserService {
                 role, // ab hard-coded nhi kra 
             }); // yahan this laga dia  // return object after the save in database
         } catch (err) {
-            const error = createHttpError(500, 'Failed to store the data in the database');
+            const error = createHttpError(500, 'Failed to store the data in the database',);
+            console.error('Database error:', err);
             throw error;
         }
     }

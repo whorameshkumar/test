@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from 'express';
+import express from 'express';
 import { Roles } from "../constants";
 import { UserController } from "../controllers/UserController";
 //import { AppDataSource } from "../data-source";   -> this was causing the error, so make sure this import is correct

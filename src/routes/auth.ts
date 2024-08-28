@@ -4,7 +4,7 @@ import { UserService } from '../services/UserService';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../entity/User';
 import logger from '../config/logger';
-import { body } from 'express-validator';
+//import { body } from 'express-validator';
 import registerValidator from '../validators/register-validator';
 import { TokenService } from '../services/TokenService';
 import { RefreshToken } from '../entity/RefreshToken';

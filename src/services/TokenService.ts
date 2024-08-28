@@ -30,11 +30,15 @@ export class TokenService {
             //privateKey = process.env.PRIVATE_KEY;
             
             //privateKey = fs.readFileSync(path.join(__dirname, '../../certs/private.pem')); // bs read kr rehye hain private key, so test pass ho, phelye dummy private key dye rehye thy
-        } catch (err) {
-            const error = createHttpError(500, 'Error while reading priavte key');
-            //next(error); // next dena parta hai
-            //return;
-            throw error; // service mein next nhi use krsaktye aur abhi throw kra error and baad mein catch krdein gye
+        } 
+        // catch (err) {
+        //     const error = createHttpError(500, 'Error while reading priavte key');
+        //     //next(error); // next dena parta hai
+        //     //return;
+        //     throw error; // service mein next nhi use krsaktye aur abhi throw kra error and baad mein catch krdein gye
+        // }
+        catch {
+            throw createHttpError(500, 'Error while reading private key');
         }
 
         const accessToken = sign(payload, privateKey, { algorithm: 'RS256', expiresIn: '1h', issuer: 'backend' });

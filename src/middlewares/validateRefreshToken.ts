@@ -27,10 +27,12 @@ export default expressjwt({
                 },
             });
             return refreshToken === null;
-        } catch (err) {
+        } catch (error) {
             logger.error("Error while getting the refresh token", {
                 id: (token?.payload as IRefreshTokenPayload).id,
+                error: error instanceof Error ? error.message : 'Unknown error',
             });
+
         }
         return true; 
     },

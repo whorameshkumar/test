@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from "express";
+import express from "express";
 import { TenantController } from "../controllers/TenantController";
 import { TenantService } from "../services/TenantService";
 import { AppDataSource } from "../config/data-source";

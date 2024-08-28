@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { TenantService } from "../services/TenantService";
 import { CreateTenantRequest } from "../types";
 import { Logger } from "winston";
-import { validationResult } from "express-validator";
-import createHttpError from "http-errors";
+//import { validationResult } from "express-validator";
+//import createHttpError from "http-errors";
 
 export class TenantController {
     constructor(private tenantService: TenantService, private logger: Logger,){}
