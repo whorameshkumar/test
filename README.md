@@ -6,4 +6,4 @@ Steps to run this project:
 2. Setup database settings inside `data-source.ts` file
 3. Run `npm start` command
 
-Ramesh
+Ramesh Kumar
