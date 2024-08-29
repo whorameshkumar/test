@@ -1,4 +1,5 @@
-import bcrypt from "bcrypt"; // for password hashing
+import bcrypt from "bcryptjs"; // for password hashing
+
 export class CredentialService {
     async comparePassword(userPassword: string, passwordHash: string) { // db sye userPassword and passwordHash lia, lazmi nhi passwordHash hi naa du kuch bhi dye saktye ho
         // compare returns boolean i.e. true and false 

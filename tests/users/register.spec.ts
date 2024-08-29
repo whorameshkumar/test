@@ -137,7 +137,12 @@ describe('POST /auth/register', () => {
             console.log('Hashed password jo db mein hai', users[0].password); // u will see hased password jo db mein hai, so secret password hashed hogaya
             expect(users[0].password).not.toBe(userData.password); //not.toBe means k nhi hai, real password nhi hai same as db password
             expect(users[0].password).toHaveLength(60); // hashed password ki length 60 hoti hai, tu yhe test bhi pass hoga
-            expect(users[0].password).toMatch(/^\$2b\$\d+\$/); // hashed password ki yhe starting ki format hai tu haan tu test pass hoga // regular expression use kra 2b sye start hota hai, 2a sye bhi hotye hain lekin humara 2b sye horaha hai
+            
+            // bcrypt k start mein 2b hota hai, but ab hum wo library nhi use kr rehye tu test fail horaha hoga
+            //expect(users[0].password).toMatch(/^\$2b\$\d+\$/); // hashed password ki yhe starting ki format hai tu haan tu test pass hoga // regular expression use kra 2b sye start hota hai, 2a sye bhi hotye hain lekin humara 2b sye horaha hai
+            // bcryptjs k start mein 2a hota hai, tu hum simply 2a use krsaktye hain. Or better u can pass both arguments using 2[a|b]
+            expect(users[0].password).toMatch(/^\$2[a|b]\$\d+\$/); // hashed password ki yhe starting ki format hai tu haan tu test pass hoga // regular expression use kra 2b sye start hota hai, 2a sye bhi hotye hain lekin humara 2b sye horaha hai
+
         });
 
         // Test 7 - no duplicate email
