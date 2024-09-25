@@ -13,9 +13,9 @@ const app = express();
 // app.use(cors()); // agar options nhi dalo gye tu kisi bhi domain sye koi bhi request kr sakta hai so not secure  
 app.use(cors({
     // better iss origin ko .env mein daal du yahan hard-coded naa kro abhi k liye krlia
-    origin: ["http://localhost:5174"], // iss port p frontend chal raha hai 
+    origin: ["http://localhost:5173"], // iss port p frontend chal raha hai 
     credentials: true, 
-}));
+})); 
 // keys publically accessible in JSON format
 app.use(express.static("public")); // express ko bol rehye hain yhe public folder humara static folder hai. Aur jesye hum browser p jatye hai `localhost:5000/.well-known/jwks.json` tu yhe key hum ko browser p dekhyegii tu means publically key available hai
 // need to use express middleware
